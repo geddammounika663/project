@@ -1,0 +1,12 @@
+# features/products.feature
+
+Feature: Product Management
+
+  Scenario: Updating a Product
+    Given the following products:
+      | name        | category | price | availability |
+      | Widget       | Gadgets  | 19.99 | In Stock      |
+    When I update the product with name "Widget" to have a price of 29.99 and availability "Out of Stock"
+    Then the product with name "Widget" should be updated with:
+      | price       | 29.99 |
+      | availability| Out of Stock |
