@@ -1,0 +1,35 @@
+import pytest
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient
+from .models import Product
+
+@pytest.mark.django_db
+def test_find_product_by_name():
+    # Setup: Create a product instance
+    product = Product.objects.create(
+        name='Unique Product Name',
+        description='A unique product description',
+        price=99.99,
+        category='Unique Category',
+        availability=True
+    )
+    
+    # Create an instance of the APIClient
+    client = APIClient()
+
+    # Send a GET request to the find by name endpoint
+    # Assuming the endpoint is 'product-find-by-name' and uses query parameters
+    response = client.get(reverse('product-find-by-name') + '?name=Unique Product Name')
+
+    # Assert the response status code
+    assert response.status_code == status.HTTP_200_OK
+
+    # Assert that the response data contains the created product
+    response_data = response.json()
+    assert len(response_data) == 1  # Ensure only one product is returned
+    assert response_data[0]['name'] == 'Unique Product Name'
+    assert response_data[0]['description'] == 'A unique product description'
+    assert response_data[0]['price'] == 99.99
+    assert response_data[0]['category'] == 'Unique Category'
+    assert response_data[0]['availability'] is True
