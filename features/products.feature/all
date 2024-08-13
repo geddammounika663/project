@@ -1,0 +1,14 @@
+# features/products.feature
+
+Feature: Product Management
+
+  Scenario: Listing All Products
+    Given the following products:
+      | name        | category | price | availability |
+      | Widget       | Gadgets  | 19.99 | In Stock      |
+      | Gizmo        | Gadgets  | 29.99 | Out of Stock  |
+    When I list all products
+    Then I should see the following products:
+      | name        | category | price | availability |
+      | Widget       | Gadgets  | 19.99 | In Stock      |
+      | Gizmo        | Gadgets  | 29.99 | Out of Stock  |
