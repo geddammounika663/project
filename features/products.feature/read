@@ -1,0 +1,14 @@
+# features/products.feature
+
+Feature: Product Management
+
+  Scenario: Reading a Product
+    Given the following products:
+      | name        | category | price | availability |
+      | Widget       | Gadgets  | 19.99 | In Stock      |
+    When I request the product with name "Widget"
+    Then the response should include product details:
+      | name        | Widget  |
+      | category    | Gadgets |
+      | price       | 19.99   |
+      | availability| In Stock|
