@@ -1,0 +1,16 @@
+# features/steps/load_steps.py
+
+from behave import given
+from app.models import Product, db
+
+@given('the following products:')
+def load_products(context):
+    for row in context.table:
+        product = Product(
+            name=row['name'],
+            category=row['category'],
+            price=float(row['price']),
+            availability=row['availability']
+        )
+        db.session.add(product)
+    db.session.commit()
