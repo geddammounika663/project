@@ -1,0 +1,16 @@
+# features/products.feature
+
+Feature: Product Management
+
+  Scenario: Searching a Product by Category
+    Given the following products:
+      | name        | category | price | availability |
+      | Widget       | Gadgets  | 19.99 | In Stock      |
+      | Gizmo        | Tools    | 29.99 | Out of Stock  |
+    When I search for products in the "Gadgets" category
+    Then I should see the following products:
+      | name        | category | price | availability |
+      | Widget       | Gadgets  | 19.99 | In Stock      |
+    And I should not see the following products:
+      | name        | category | price | availability |
+      | Gizmo        | Tools    | 29.99 | Out of Stock  |
