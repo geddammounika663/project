@@ -1,0 +1,38 @@
+# service/routes.py
+
+from flask import Blueprint, jsonify, request
+from app.models import Product, db
+
+bp = Blueprint('products', __name__, url_prefix='/products')
+
+@bp.route('', methods=['GET'])
+def list_all_products():
+    products = Product.query.all()
+    return jsonify([product.to_dict() for product in products])
+
+@bp.route('/search/name', methods=['GET'])
+def list_by_name():
+    name = request.args.get('name')
+    if not name:
+        return jsonify({'error': 'Name parameter is required'}), 400
+    
+    products = Product.query.filter(Product.name.ilike(f'%{name}%')).all()
+    return jsonify([product.to_dict() for product in products])
+
+@bp.route('/search/category', methods=['GET'])
+def list_by_category():
+    category = request.args.get('category')
+    if not category:
+        return jsonify({'error': 'Category parameter is required'}), 400
+    
+    products = Product.query.filter(Product.category.ilike(f'%{category}%')).all()
+    return jsonify([product.to_dict() for product in products])
+
+@bp.route('/search/availability', methods=['GET'])
+def list_by_availability():
+    availability = request.args.get('availability')
+    if availability not in ['in_stock', 'out_of_stock']:
+        return jsonify({'error': 'Invalid availability status'}), 400
+    
+    products = Product.query.filter(Product.availability == availability).all()
+    return jsonify([product.to_dict() for product in products])
