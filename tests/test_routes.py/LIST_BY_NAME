@@ -1,0 +1,34 @@
+# tests/test_routes.py
+
+import unittest
+from app import app, db
+from app.models import Product
+
+class ProductRoutesTestCase(unittest.TestCase):
+    def setUp(self):
+        self.app = app.test_client()
+        self.app.testing = True
+        db.create_all()
+
+        # Add some test products
+        product1 = Product(name='Product A', category='Category1', availability=True)
+        product2 = Product(name='Product B', category='Category2', availability=False)
+        db.session.add(product1)
+        db.session.add(product2)
+        db.session.commit()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_list_by_name(self):
+        # Send a GET request to list products by name
+        response = self.app.get('/products?name=Product A')
+        self.assertEqual(response.status_code, 200)
+        
+        # Check if the response contains the correct product
+        self.assertIn('Product A', response.data.decode())
+        self.assertNotIn('Product B', response.data.decode())
+
+if __name__ == '__main__':
+    unittest.main()
