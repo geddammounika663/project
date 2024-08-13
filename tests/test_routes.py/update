@@ -1,0 +1,42 @@
+# tests/test_routes.py
+
+import unittest
+from app import app, db
+from app.models import Product
+
+class ProductRoutesTestCase(unittest.TestCase):
+    def setUp(self):
+        self.app = app.test_client()
+        self.app.testing = True
+        # Add setup code for the test database if needed
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_update_product(self):
+        # Create a product to update
+        product = Product(name='Old Name', category='Category1', availability=True)
+        db.session.add(product)
+        db.session.commit()
+
+        # Data to update
+        update_data = {
+            'name': 'New Name',
+            'category': 'Category2',
+            'availability': False
+        }
+
+        # Send a PUT request to update the product
+        response = self.app.put(f'/products/{product.id}', json=update_data)
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that the product has been updated
+        updated_product = Product.query.get(product.id)
+        self.assertEqual(updated_product.name, 'New Name')
+        self.assertEqual(updated_product.category, 'Category2')
+        self.assertFalse(updated_product.availability)
+
+if __name__ == '__main__':
+    unittest.main()
