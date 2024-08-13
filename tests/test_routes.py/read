@@ -1,0 +1,36 @@
+import pytest
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient
+from .models import Product
+
+@pytest.mark.django_db
+def test_read_product():
+    # Setup: Create a product instance
+    product = Product.objects.create(
+        name='Product 1',
+        description='Description for product 1',
+        price=50.00,
+        category='Category A',
+        availability=True
+    )
+    
+    # Create an instance of the APIClient
+    client = APIClient()
+    
+    # URL to fetch the specific product, assuming the endpoint pattern is 'product-detail' and takes an ID parameter
+    url = reverse('product-detail', kwargs={'pk': product.pk})
+    
+    # Send a GET request to the URL
+    response = client.get(url)
+    
+    # Assert the response status code
+    assert response.status_code == status.HTTP_200_OK
+    
+    # Assert that the response data matches the product data
+    response_data = response.json()
+    assert response_data['name'] == product.name
+    assert response_data['description'] == product.description
+    assert response_data['price'] == str(product.price)  # Price might be returned as a string
+    assert response_data['category'] == product.category
+    assert response_data['availability'] == product.availability
