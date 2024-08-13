@@ -1,0 +1,32 @@
+# tests/test_routes.py
+
+import unittest
+from app import app, db
+from app.models import Product
+
+class ProductRoutesTestCase(unittest.TestCase):
+    def setUp(self):
+        self.app = app.test_client()
+        self.app.testing = True
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_delete_product(self):
+        # Create a product to delete
+        product = Product(name='Test Product', category='Category1', availability=True)
+        db.session.add(product)
+        db.session.commit()
+
+        # Send a DELETE request to remove the product
+        response = self.app.delete(f'/products/{product.id}')
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that the product has been deleted
+        deleted_product = Product.query.get(product.id)
+        self.assertIsNone(deleted_product)
+
+if __name__ == '__main__':
+    unittest.main()
