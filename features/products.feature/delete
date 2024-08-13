@@ -1,0 +1,10 @@
+# features/products.feature
+
+Feature: Product Management
+
+  Scenario: Deleting a Product
+    Given the following products:
+      | name        | category | price | availability |
+      | Widget       | Gadgets  | 19.99 | In Stock      |
+    When I delete the product with name "Widget"
+    Then the product with name "Widget" should not exist
